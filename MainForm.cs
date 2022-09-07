@@ -1,30 +1,27 @@
-﻿using System;
-using System.Drawing;
-using System.Security;
-using System.Windows.Forms;
+﻿using System.Security;
 
 namespace WordPasswordBruteForce
 {
-    public partial class Main : Form
+    public partial class MainForm : Form
     {
-        private static string allowedstr = null;
-        private static char[] AllowedCC = null;
+        private static string? AllowedStr = null;
+        private static char[]? AllowedCC = null;
         private int AllowedlattertIdx = -1;
         private object SyncLockerobjNewPassword = new object();
         private char[] PasswordToVerify;
 
-        private string FileName = null;
-        private System.Collections.Generic.List<System.Threading.Thread> TTCll = null;
+        private string? FileName = null;
+        private List<Thread>? TTCll = null;
         private DateTime StartDtTm;
 
         private object SyncLockerobjStopSearch = new object();
         private bool MeStopSearch = false;
 
-        public Main()
+        public MainForm()
         {
             InitializeComponent();
 
-            ExtimedTimeTxt_Populate();
+            EstimatedTimeTxt_Populate();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -32,9 +29,9 @@ namespace WordPasswordBruteForce
             button1.Enabled = false;
             btnBrowse.Enabled = false;
 
-            allowedstr = AllowedCharsToString();
-            AllowedCC = allowedstr.ToCharArray();
-            AllowedlattertIdx = allowedstr.Length - 1;
+            AllowedStr = AllowedCharsToString();
+            AllowedCC = AllowedStr.ToCharArray();
+            AllowedlattertIdx = AllowedStr.Length - 1;
 
             FileName = FileNameTxt.Text;
 
@@ -48,11 +45,11 @@ namespace WordPasswordBruteForce
             int ThreadToUse = int.Parse(MaxTasksTxt.Text);
             ThreadPanel_Create(ThreadToUse);
 
-            TTCll = new System.Collections.Generic.List<System.Threading.Thread>();
+            TTCll = new List<Thread>();
             for (int numt = 0; numt < ThreadToUse; numt++)
             {
                 TextBox NumTxt = (TextBox)(EsecuzioneTLP.Controls["NumThread" + numt.ToString("00") + "Txt"]);
-                var T = new System.Threading.Thread(() => { Runner(NumTxt); });
+                var T = new Thread(() => { Runner(NumTxt); });
                 T.Priority = System.Threading.ThreadPriority.Lowest;
                 T.Start();
                 TTCll.Add(T);
@@ -80,14 +77,14 @@ namespace WordPasswordBruteForce
                 // r 1
                 EsecuzioneTLP.Controls.Add(new Label() { Text = Idx.ToString("00") }, Idx, 0);
                 // r 2
-                TextBox NumTxt = new TextBox() { TextAlign = HorizontalAlignment.Right, Width = 50, Name = "NumThread" + Idx.ToString("00") + "Txt" };
+                TextBox NumTxt = new TextBox() { TextAlign = HorizontalAlignment.Right, Width = 50, Name = "NumThread" + Idx.ToString("00") + "Txt", Dock = DockStyle.Fill };
                 EsecuzioneTLP.Controls.Add(NumTxt, Idx, 1);
             }
         }
 
         private void Runner(TextBox NumTxt)
         {
-            var AA = new System.Action<string>((s) => { NumTxt.Text = s; });
+            var AA = new Action<string>((s) => { NumTxt.Text = s; });
             //--- App Word
             NumTxt.Invoke(AA, "word");
             var WApp = new Microsoft.Office.Interop.Word.Application();
@@ -150,7 +147,7 @@ namespace WordPasswordBruteForce
                 {
                     if (PasswordToVerify[i] != AllowedCC[AllowedlattertIdx])
                     {
-                        PasswordToVerify[i] = AllowedCC[(allowedstr.IndexOf(PasswordToVerify[i]) + 1)];
+                        PasswordToVerify[i] = AllowedCC[(AllowedStr.IndexOf(PasswordToVerify[i]) + 1)];
                         riporto = false;
                         break;
                     }
@@ -194,34 +191,30 @@ namespace WordPasswordBruteForce
 
         private void Achivied(string pw)
         {
-            PasswordTxt.Invoke(new System.Action(() => { PasswordTxt.Text = pw; }));
+            PasswordTxt.Invoke(new Action(() => { PasswordTxt.Text = pw; }));
             try
             {
                 DateTime NowDtTm = DateTime.UtcNow;
-                TimeNeededTxt.Invoke(new System.Action(() => { TimeNeededTxt.Text = (NowDtTm - StartDtTm).ToString(@"d\g\g\:hh\h\h\:mm\m\m\:ss\s\s"); }));
-                TimeNeededTxt.Invoke(new System.Action(() => { StartTxt.Text = (StartDtTm).ToString(); }));
-                TimeNeededTxt.Invoke(new System.Action(() => { EndTxt.Text = (NowDtTm).ToString(); }));
+                TimeNeededTxt.Invoke(new Action(() => { TimeNeededTxt.Text = (NowDtTm - StartDtTm).ToString(@"d\g\g\:hh\h\h\:mm\m\m\:ss\s\s"); }));
+                TimeNeededTxt.Invoke(new Action(() => { StartTxt.Text = (StartDtTm).ToString(); }));
+                TimeNeededTxt.Invoke(new Action(() => { EndTxt.Text = (NowDtTm).ToString(); }));
                 this.BackColor = Color.LightGreen;
             }
             finally
             { }
         }
 
-        private void Form2_Load(object sender, EventArgs e)
-        {
-        }
-
         private void LunghezzaMassimaTxt_TextChanged(object sender, EventArgs e)
         {
-            ExtimedTimeTxt_Populate();
+            EstimatedTimeTxt_Populate();
         }
 
         private void MaxTasksTxt_TextChanged(object sender, EventArgs e)
         {
-            ExtimedTimeTxt_Populate();
+            EstimatedTimeTxt_Populate();
         }
 
-        private void ExtimedTimeTxt_Populate()
+        private void EstimatedTimeTxt_Populate()
         {
             ExtimedTimeTxt.Text = string.Empty;
 
@@ -246,17 +239,17 @@ namespace WordPasswordBruteForce
 
         private void UppercaseChk_CheckedChanged(object sender, EventArgs e)
         {
-            ExtimedTimeTxt_Populate();
+            EstimatedTimeTxt_Populate();
         }
 
         private void LowercaseChk_CheckedChanged(object sender, EventArgs e)
         {
-            ExtimedTimeTxt_Populate();
+            EstimatedTimeTxt_Populate();
         }
 
         private void NumbersChk_CheckedChanged(object sender, EventArgs e)
         {
-            ExtimedTimeTxt_Populate();
+            EstimatedTimeTxt_Populate();
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)

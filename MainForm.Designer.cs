@@ -1,6 +1,6 @@
 ﻿namespace WordPasswordBruteForce
 {
-    partial class Main
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.label11 = new System.Windows.Forms.Label();
             this.FileNameTxt = new System.Windows.Forms.TextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
@@ -55,13 +55,13 @@
             this.PwMinLenTxt = new System.Windows.Forms.TextBox();
             this.PwMaxLenTxt = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.SpecialChk = new System.Windows.Forms.CheckBox();
             this.UppercaseChk = new System.Windows.Forms.CheckBox();
             this.NumbersChk = new System.Windows.Forms.CheckBox();
             this.LowercaseChk = new System.Windows.Forms.CheckBox();
             this.button1 = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.btnBrowse = new System.Windows.Forms.Button();
-            this.SpecialChk = new System.Windows.Forms.CheckBox();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -92,7 +92,7 @@
             // 
             this.groupBox5.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.groupBox5.Controls.Add(this.EsecuzioneTLP);
-            this.groupBox5.Location = new System.Drawing.Point(14, 227);
+            this.groupBox5.Location = new System.Drawing.Point(14, 228);
             this.groupBox5.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -130,7 +130,7 @@
             this.groupBox4.Controls.Add(this.TimeNeededTxt);
             this.groupBox4.Controls.Add(this.label3);
             this.groupBox4.Controls.Add(this.PasswordTxt);
-            this.groupBox4.Location = new System.Drawing.Point(14, 328);
+            this.groupBox4.Location = new System.Drawing.Point(14, 331);
             this.groupBox4.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -226,7 +226,7 @@
             this.groupBox3.Controls.Add(this.ExtimedTimeTxt);
             this.groupBox3.Controls.Add(this.label2);
             this.groupBox3.Controls.Add(this.MaxTasksTxt);
-            this.groupBox3.Location = new System.Drawing.Point(415, 63);
+            this.groupBox3.Location = new System.Drawing.Point(417, 63);
             this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -251,9 +251,9 @@
             this.label7.Location = new System.Drawing.Point(7, 67);
             this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(150, 15);
+            this.label7.Size = new System.Drawing.Size(157, 15);
             this.label7.TabIndex = 9;
-            this.label7.Text = "Extmtd time to accomplish";
+            this.label7.Text = "Estimate time to accomplish";
             // 
             // ExtimedTimeTxt
             // 
@@ -278,7 +278,7 @@
             // MaxTasksTxt
             // 
             this.MaxTasksTxt.Location = new System.Drawing.Point(7, 40);
-            this.MaxTasksTxt.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.MaxTasksTxt.Margin = new System.Windows.Forms.Padding(8, 3, 8, 3);
             this.MaxTasksTxt.Name = "MaxTasksTxt";
             this.MaxTasksTxt.Size = new System.Drawing.Size(67, 23);
             this.MaxTasksTxt.TabIndex = 6;
@@ -335,7 +335,7 @@
             // PwMinLenTxt
             // 
             this.PwMinLenTxt.Location = new System.Drawing.Point(10, 37);
-            this.PwMinLenTxt.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.PwMinLenTxt.Margin = new System.Windows.Forms.Padding(8, 3, 8, 3);
             this.PwMinLenTxt.Name = "PwMinLenTxt";
             this.PwMinLenTxt.Size = new System.Drawing.Size(60, 23);
             this.PwMinLenTxt.TabIndex = 4;
@@ -345,7 +345,7 @@
             // PwMaxLenTxt
             // 
             this.PwMaxLenTxt.Location = new System.Drawing.Point(78, 37);
-            this.PwMaxLenTxt.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.PwMaxLenTxt.Margin = new System.Windows.Forms.Padding(8, 3, 8, 3);
             this.PwMaxLenTxt.Name = "PwMaxLenTxt";
             this.PwMaxLenTxt.Size = new System.Drawing.Size(60, 23);
             this.PwMaxLenTxt.TabIndex = 4;
@@ -366,6 +366,17 @@
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Char set";
+            // 
+            // SpecialChk
+            // 
+            this.SpecialChk.AutoSize = true;
+            this.SpecialChk.Location = new System.Drawing.Point(8, 100);
+            this.SpecialChk.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.SpecialChk.Name = "SpecialChk";
+            this.SpecialChk.Size = new System.Drawing.Size(117, 19);
+            this.SpecialChk.TabIndex = 10;
+            this.SpecialChk.Text = "special char (@#)";
+            this.SpecialChk.UseVisualStyleBackColor = true;
             // 
             // UppercaseChk
             // 
@@ -407,7 +418,7 @@
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.BackColor = System.Drawing.Color.Honeydew;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Location = new System.Drawing.Point(465, 425);
+            this.button1.Location = new System.Drawing.Point(469, 428);
             this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(144, 31);
@@ -431,24 +442,11 @@
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
-            // SpecialChk
-            // 
-            this.SpecialChk.AutoSize = true;
-            this.SpecialChk.Checked = true;
-            this.SpecialChk.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SpecialChk.Location = new System.Drawing.Point(8, 100);
-            this.SpecialChk.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.SpecialChk.Name = "SpecialChk";
-            this.SpecialChk.Size = new System.Drawing.Size(120, 19);
-            this.SpecialChk.TabIndex = 10;
-            this.SpecialChk.Text = "special char (!@#)";
-            this.SpecialChk.UseVisualStyleBackColor = true;
-            // 
-            // Main
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(616, 468);
+            this.ClientSize = new System.Drawing.Size(620, 471);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label11);
@@ -460,10 +458,9 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MaximizeBox = false;
-            this.Name = "Main";
+            this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Word Password Brute Force";
-            this.Load += new System.EventHandler(this.Form2_Load);
             this.groupBox5.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();

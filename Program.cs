@@ -1,7 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
-
-namespace WordPasswordBruteForce
+﻿namespace WordPasswordBruteForce
 {
     internal static class Program
     {
@@ -13,7 +10,7 @@ namespace WordPasswordBruteForce
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Main());
+            Application.Run(new MainForm());
         }
     }
 }
