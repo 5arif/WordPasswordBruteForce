@@ -225,7 +225,7 @@ namespace WordPasswordBruteForce
                 // 1.500 / 4 thread = 400 test/processore/minuto
                 double minutes = Math.Pow(AllowedCharsToString().Length, L) / (P * 400);
                 TimeSpan TS = new TimeSpan(0, (int)minutes, 0);
-                ExtimedTimeTxt.Text = (TS.TotalDays > 5 ? ((int)(TS.TotalDays)).ToString() + "gg " : TS.ToString().Replace(".", "gg "));
+                ExtimedTimeTxt.Text = TS.ToString();
             }
         }
 
