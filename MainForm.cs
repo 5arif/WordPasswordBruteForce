@@ -1,46 +1,51 @@
-﻿using System.Security;
+﻿using System.Collections.Concurrent;
+using System.Security;
 
 namespace WordPasswordBruteForce
 {
     public partial class MainForm : Form
     {
-        private static string? AllowedStr = null;
-        private static char[]? AllowedCC = null;
-        private int AllowedlattertIdx = -1;
-        private object SyncLockerobjNewPassword = new object();
-        private char[] PasswordToVerify;
+        private static string allowedStr = String.Empty;
+        private static char[] allowedCC = Array.Empty<char>();
+        private int allowedlattertIdx = -1;
+        private object syncLockerobjNewPassword = new object();
+        private char[] passwordToVerify = Array.Empty<char>();
 
-        private string? FileName = null;
+        private string? fileName = null;
         private List<Thread>? TTCll = null;
-        private DateTime StartDtTm;
+        private DateTime startDtTm;
 
-        private object SyncLockerobjStopSearch = new object();
-        private bool MeStopSearch = false;
+        private object syncLockerobjStopSearch = new object();
+        private bool stopSearch = false;
+
+        private List<string> testedPasswords;
 
         public MainForm()
         {
             InitializeComponent();
 
             EstimatedTimeTxt_Populate();
+
+            openFileDialog1.Filter = "Word Document (*.DOC;*.DOCX;*.RTF)|*.DOC;*.DOCX;*.RTF|All files (*.*)|*.*";
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void BtnFind_Click(object sender, EventArgs e)
         {
-            button1.Enabled = false;
+            BtnFind.Enabled = false;
             btnBrowse.Enabled = false;
+            testedPasswords = new();
 
-            AllowedStr = AllowedCharsToString();
-            AllowedCC = AllowedStr.ToCharArray();
-            AllowedlattertIdx = AllowedStr.Length - 1;
+            allowedStr = AllowedCharsToString();
+            allowedCC = allowedStr.ToCharArray();
+            allowedlattertIdx = allowedStr.Length - 1;
 
-            FileName = FileNameTxt.Text;
-
-            StartDtTm = DateTime.UtcNow;
+            fileName = FileNameTxt.Text;
+            startDtTm = DateTime.UtcNow;
 
             // --- set first password to check
             int PwMinLen = int.Parse(PwMinLenTxt.Text);
-            PasswordToVerify = new char[PwMinLen];
-            PasswordToVerify = new string(AllowedCC[0], PwMinLen).ToCharArray();
+            passwordToVerify = new char[PwMinLen];
+            passwordToVerify = new string(allowedCC[0], PwMinLen).ToCharArray();
 
             int ThreadToUse = int.Parse(MaxTasksTxt.Text);
             ThreadPanel_Create(ThreadToUse);
@@ -50,7 +55,7 @@ namespace WordPasswordBruteForce
             {
                 TextBox NumTxt = (TextBox)(EsecuzioneTLP.Controls["NumThread" + numt.ToString("00") + "Txt"]);
                 var T = new Thread(() => { Runner(NumTxt); });
-                T.Priority = System.Threading.ThreadPriority.Lowest;
+                T.Priority = System.Threading.ThreadPriority.BelowNormal;
                 T.Start();
                 TTCll.Add(T);
             }
@@ -93,14 +98,18 @@ namespace WordPasswordBruteForce
             while (!StopSearch())
             {
                 string test = new string(PasswordNext());
-
-                NumTxt.Invoke(AA, test);
-
+                while ((bool)this.Invoke(() => testedPasswords.Contains(test)))
                 {
-                    Microsoft.Office.Interop.Word.Document WDoc = null;
+                    Text = new string(PasswordNext());
+                }
+
+                testedPasswords.Add(test);
+                NumTxt.Invoke(AA, test);
+                {
+                    Microsoft.Office.Interop.Word.Document? WDoc = null;
                     try
                     {
-                        WDoc = WApp.Documents.Open(FileName, PasswordDocument: test, ReadOnly: true);
+                        WDoc = WApp.Documents.Open(fileName, PasswordDocument: test, ReadOnly: true);
                         StopSearch(true);
 
                         Achivied(test);
@@ -110,21 +119,14 @@ namespace WordPasswordBruteForce
                     }
                     catch (Exception ex)
                     {
-                        if (ex.Message.Contains("La password non è corretta. Word non può aprire il documento."))
-                        {
-                            // ok
-                        }
-                        else
-                        {
-                            // errore inatteso
-                            Console.WriteLine(ex.Message);
-                        }
+                        ex.Message.Contains("The password is incorrect. Word cannot open the document.");
                     }
                 }
             }
 
             if (WApp != null)
             {
+
                 try { WApp.Quit(); } finally { }
                 try { System.Runtime.InteropServices.Marshal.ReleaseComObject(WApp); } finally { }
             }
@@ -134,38 +136,38 @@ namespace WordPasswordBruteForce
         {
             char[] GiveBack;
 
-            lock (SyncLockerobjNewPassword)
+            lock (syncLockerobjNewPassword)
             {
                 // --- password to verify
-                GiveBack = new char[PasswordToVerify.Length];
+                GiveBack = new char[passwordToVerify.Length];
 
                 // --- password to prepare to next round
-                PasswordToVerify.CopyTo(GiveBack, 0);
+                passwordToVerify.CopyTo(GiveBack, 0);
                 //  prepare next pwd
                 bool riporto = false;
-                for (int i = PasswordToVerify.Length - 1; i >= 0; i--)
+                for (int i = passwordToVerify.Length - 1; i >= 0; i--)
                 {
-                    if (PasswordToVerify[i] != AllowedCC[AllowedlattertIdx])
+                    if (passwordToVerify[i] != allowedCC[allowedlattertIdx])
                     {
-                        PasswordToVerify[i] = AllowedCC[(AllowedStr.IndexOf(PasswordToVerify[i]) + 1)];
+                        passwordToVerify[i] = allowedCC[(allowedStr.IndexOf(passwordToVerify[i]) + 1)];
                         riporto = false;
                         break;
                     }
                     else
                     {
-                        PasswordToVerify[i] = AllowedCC[0];
+                        passwordToVerify[i] = allowedCC[0];
                         riporto = true;
                     }
                 }
                 // --- insert new starting char on left side
                 if (riporto)
                 {
-                    char[] tmp = new char[PasswordToVerify.Length];
-                    PasswordToVerify.CopyTo(tmp, 0);
+                    char[] tmp = new char[passwordToVerify.Length];
+                    passwordToVerify.CopyTo(tmp, 0);
 
-                    PasswordToVerify = new char[PasswordToVerify.Length + 1];
-                    PasswordToVerify[0] = AllowedCC[0];
-                    tmp.CopyTo(PasswordToVerify, 1);
+                    passwordToVerify = new char[passwordToVerify.Length + 1];
+                    passwordToVerify[0] = allowedCC[0];
+                    tmp.CopyTo(passwordToVerify, 1);
                 }
             }
 
@@ -176,14 +178,14 @@ namespace WordPasswordBruteForce
         {
             bool yn;
 
-            lock (SyncLockerobjStopSearch)
+            lock (syncLockerobjStopSearch)
             {
                 if (stopper)
                 {
-                    MeStopSearch = stopper;
+                    stopSearch = stopper;
                 }
 
-                yn = MeStopSearch;
+                yn = stopSearch;
             }
 
             return yn;
@@ -195,10 +197,10 @@ namespace WordPasswordBruteForce
             try
             {
                 DateTime NowDtTm = DateTime.UtcNow;
-                TimeNeededTxt.Invoke(new Action(() => { TimeNeededTxt.Text = (NowDtTm - StartDtTm).ToString(@"d\g\g\:hh\h\h\:mm\m\m\:ss\s\s"); }));
-                TimeNeededTxt.Invoke(new Action(() => { StartTxt.Text = (StartDtTm).ToString(); }));
+                TimeNeededTxt.Invoke(new Action(() => { TimeNeededTxt.Text = (NowDtTm - startDtTm).ToString(@"d\g\g\:hh\h\h\:mm\m\m\:ss\s\s"); }));
+                TimeNeededTxt.Invoke(new Action(() => { StartTxt.Text = (startDtTm).ToString(); }));
                 TimeNeededTxt.Invoke(new Action(() => { EndTxt.Text = (NowDtTm).ToString(); }));
-                this.BackColor = Color.LightGreen;
+                this.groupBox4.BackColor = Color.LightGreen;
             }
             finally
             { }

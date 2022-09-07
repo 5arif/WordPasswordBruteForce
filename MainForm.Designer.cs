@@ -59,7 +59,7 @@
             this.UppercaseChk = new System.Windows.Forms.CheckBox();
             this.NumbersChk = new System.Windows.Forms.CheckBox();
             this.LowercaseChk = new System.Windows.Forms.CheckBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.BtnFind = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.groupBox5.SuspendLayout();
@@ -413,19 +413,19 @@
             this.LowercaseChk.Text = "lowercase (az)";
             this.LowercaseChk.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // BtnFind
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.BackColor = System.Drawing.Color.Honeydew;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Location = new System.Drawing.Point(469, 428);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(144, 31);
-            this.button1.TabIndex = 20;
-            this.button1.Text = "Find password";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.BtnFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnFind.BackColor = System.Drawing.Color.Honeydew;
+            this.BtnFind.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnFind.Location = new System.Drawing.Point(469, 428);
+            this.BtnFind.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.BtnFind.Name = "BtnFind";
+            this.BtnFind.Size = new System.Drawing.Size(144, 31);
+            this.BtnFind.TabIndex = 20;
+            this.BtnFind.Text = "Find password";
+            this.BtnFind.UseVisualStyleBackColor = false;
+            this.BtnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
             // openFileDialog1
             // 
@@ -448,7 +448,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(620, 471);
             this.Controls.Add(this.btnBrowse);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.BtnFind);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.FileNameTxt);
             this.Controls.Add(this.groupBox5);
@@ -507,7 +507,7 @@
         private System.Windows.Forms.CheckBox UppercaseChk;
         private System.Windows.Forms.CheckBox NumbersChk;
         private System.Windows.Forms.CheckBox LowercaseChk;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button BtnFind;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button btnBrowse;
         private CheckBox SpecialChk;
