@@ -1,4 +1,7 @@
-﻿using System.Collections.Concurrent;
+﻿using NPOI.POIFS.Crypt;
+using NPOI.POIFS.Crypt.Agile;
+using NPOI.POIFS.FileSystem;
+using System.Reflection;
 using System.Security;
 
 namespace WordPasswordBruteForce
@@ -8,14 +11,13 @@ namespace WordPasswordBruteForce
         private static string allowedStr = String.Empty;
         private static char[] allowedCC = Array.Empty<char>();
         private int allowedlattertIdx = -1;
-        private object syncLockerobjNewPassword = new object();
+        private object syncLockerObjNewPassword = new();
         private char[] passwordToVerify = Array.Empty<char>();
 
         private string? fileName = null;
-        private List<Thread>? TTCll = null;
         private DateTime startDtTm;
 
-        private object syncLockerobjStopSearch = new object();
+        private object syncLockerObjStopSearch = new();
         private bool stopSearch = false;
 
         private List<string> testedPasswords;
@@ -24,13 +26,23 @@ namespace WordPasswordBruteForce
         {
             InitializeComponent();
 
-            EstimatedTimeTxt_Populate();
+            //force to load AgileDecryptor
+            Assembly.Load(typeof(AgileDecryptor).Assembly.GetName());
 
-            openFileDialog1.Filter = "Word Document (*.DOC;*.DOCX;*.RTF)|*.DOC;*.DOCX;*.RTF|All files (*.*)|*.*";
+            EstimatedTimeTxt_Populate();
+            openFileDoc.Filter = "Office Document (*.DOC;*.DOCX;*.RTF;*.XLS;*.XLSX;)|*.DOC;*.DOCX;*.RTF;*.XLS;*.XLSX;*.CSV|All files (*.*)|*.*";
         }
 
         private void BtnFind_Click(object sender, EventArgs e)
         {
+            ValidateChildren();
+            if (!string.IsNullOrEmpty(errorProviderDoc.GetError(FileNameTxt)))
+            {
+                return;
+            }
+
+            MessageBox.Show("Start");
+
             BtnFind.Enabled = false;
             btnBrowse.Enabled = false;
             testedPasswords = new();
@@ -49,31 +61,34 @@ namespace WordPasswordBruteForce
 
             int ThreadToUse = int.Parse(MaxTasksTxt.Text);
             ThreadPanel_Create(ThreadToUse);
+            stopSearch = false;
 
-            TTCll = new List<Thread>();
             for (int numt = 0; numt < ThreadToUse; numt++)
             {
-                TextBox NumTxt = (TextBox)(EsecuzioneTLP.Controls["NumThread" + numt.ToString("00") + "Txt"]);
-                var T = new Thread(() => { Runner(NumTxt); });
-                T.Priority = System.Threading.ThreadPriority.BelowNormal;
-                T.Start();
-                TTCll.Add(T);
+                TextBox numTxt = (TextBox)(EsecuzioneTLP.Controls["NumThread" + numt.ToString("00") + "Txt"]);
+                var thread = new Thread(() => { Runner(numTxt); });
+                thread.Priority = ThreadPriority.Lowest;
+                thread.Start();
             }
         }
 
         private void ThreadPanel_Create(int Tot)
         {
-            EsecuzioneTLP.ColumnCount = Tot;
+            if(EsecuzioneTLP.Controls.Count > 0)
+            {
+                EsecuzioneTLP.Controls.Clear();
+            }
 
+            EsecuzioneTLP.ColumnCount = Tot;
             // the first column already exists
             {
-                ColumnStyle ClnSt = new ColumnStyle(SizeType.Percent, ((float)1 / Tot * 100));
+                ColumnStyle ClnSt = new(SizeType.Percent, ((float)1 / Tot * 100));
                 EsecuzioneTLP.ColumnStyles[0] = ClnSt;
             }
 
             for (int Idx = 0 + 1; Idx < Tot; Idx++)
             {
-                ColumnStyle ClnSt = new ColumnStyle(SizeType.Percent, ((float)1 / Tot * 100));
+                ColumnStyle ClnSt = new(SizeType.Percent, ((float)1 / Tot * 100));
                 int i = EsecuzioneTLP.ColumnStyles.Add(ClnSt);
             }
 
@@ -82,53 +97,48 @@ namespace WordPasswordBruteForce
                 // r 1
                 EsecuzioneTLP.Controls.Add(new Label() { Text = Idx.ToString("00") }, Idx, 0);
                 // r 2
-                TextBox NumTxt = new TextBox() { TextAlign = HorizontalAlignment.Right, Width = 50, Name = "NumThread" + Idx.ToString("00") + "Txt", Dock = DockStyle.Fill };
+                TextBox NumTxt = new() { TextAlign = HorizontalAlignment.Right, Width = 50, Name = "NumThread" + Idx.ToString("00") + "Txt", Dock = DockStyle.Fill };
                 EsecuzioneTLP.Controls.Add(NumTxt, Idx, 1);
             }
         }
 
         private void Runner(TextBox NumTxt)
         {
-            var AA = new Action<string>((s) => { NumTxt.Text = s; });
-            //--- App Word
-            NumTxt.Invoke(AA, "word");
-            var WApp = new Microsoft.Office.Interop.Word.Application();
-            NumTxt.Invoke(AA, string.Empty);
+            var action = new Action<string>((s) => { NumTxt.Text = s; });
+            NumTxt.Invoke(action, string.Empty);
+
+            //NPOI
+            var fileSystem = new POIFSFileSystem(new FileStream(fileName ?? String.Empty, FileMode.Open, FileAccess.Read));
+            var info = new EncryptionInfo(fileSystem);
+            var decryptor = Decryptor.GetInstance(info);
 
             while (!StopSearch())
             {
-                string test = new string(PasswordNext());
-                while ((bool)this.Invoke(() => testedPasswords.Contains(test)))
+                string test = new(PasswordNext());
+                while ((bool)Invoke(() => testedPasswords.Contains(test)))
                 {
-                    Text = new string(PasswordNext());
+                    test = new string(PasswordNext());
                 }
 
                 testedPasswords.Add(test);
-                NumTxt.Invoke(AA, test);
+                NumTxt.Invoke(action, test);
+
+                try
                 {
-                    Microsoft.Office.Interop.Word.Document? WDoc = null;
-                    try
+                    if (decryptor.VerifyPassword(test))
                     {
-                        WDoc = WApp.Documents.Open(fileName, PasswordDocument: test, ReadOnly: true);
                         StopSearch(true);
-
                         Achivied(test);
-
-                        WDoc.Close();
-                        System.Runtime.InteropServices.Marshal.ReleaseComObject(WDoc);
-                    }
-                    catch (Exception ex)
-                    {
-                        ex.Message.Contains("The password is incorrect. Word cannot open the document.");
                     }
                 }
-            }
-
-            if (WApp != null)
-            {
-
-                try { WApp.Quit(); } finally { }
-                try { System.Runtime.InteropServices.Marshal.ReleaseComObject(WApp); } finally { }
+                catch (Exception ex)
+                {
+                    ex.Message.Contains("The password is incorrect. Word cannot open the document.");
+                }
+                finally
+                {
+                    fileSystem.Close();
+                }
             }
         }
 
@@ -136,7 +146,7 @@ namespace WordPasswordBruteForce
         {
             char[] GiveBack;
 
-            lock (syncLockerobjNewPassword)
+            lock (syncLockerObjNewPassword)
             {
                 // --- password to verify
                 GiveBack = new char[passwordToVerify.Length];
@@ -178,7 +188,7 @@ namespace WordPasswordBruteForce
         {
             bool yn;
 
-            lock (syncLockerobjStopSearch)
+            lock (syncLockerObjStopSearch)
             {
                 if (stopper)
                 {
@@ -200,10 +210,13 @@ namespace WordPasswordBruteForce
                 TimeNeededTxt.Invoke(new Action(() => { TimeNeededTxt.Text = (NowDtTm - startDtTm).ToString(@"d\g\g\:hh\h\h\:mm\m\m\:ss\s\s"); }));
                 TimeNeededTxt.Invoke(new Action(() => { StartTxt.Text = (startDtTm).ToString(); }));
                 TimeNeededTxt.Invoke(new Action(() => { EndTxt.Text = (NowDtTm).ToString(); }));
-                this.groupBox4.BackColor = Color.LightGreen;
+                groupBox4.BackColor = Color.LightGreen;
             }
             finally
-            { }
+            {
+                stopSearch = true;
+                StopSearch(true);
+            }
         }
 
         private void LunghezzaMassimaTxt_TextChanged(object sender, EventArgs e)
@@ -226,7 +239,7 @@ namespace WordPasswordBruteForce
                 // 4 thread su 238.328 combinations  ->  2h,30m  -> 1.500 test/minut
                 // 1.500 / 4 thread = 400 test/processore/minuto
                 double minutes = Math.Pow(AllowedCharsToString().Length, L) / (P * 400);
-                TimeSpan TS = new TimeSpan(0, (int)minutes, 0);
+                TimeSpan TS = new(0, (int)minutes, 0);
                 ExtimedTimeTxt.Text = TS.ToString();
             }
         }
@@ -256,17 +269,52 @@ namespace WordPasswordBruteForce
 
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            if (openFileDoc.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    FileNameTxt.Text = openFileDialog1.FileName;
+                    FileNameTxt.Text = openFileDoc.FileName;
                 }
                 catch (SecurityException ex)
                 {
                     MessageBox.Show($"Security error.\n\nError message: {ex.Message}\n\n" +
                     $"Details:\n\n{ex.StackTrace}");
                 }
+            }
+        }
+
+        private void BtnCancel_Click(object sender, EventArgs e)
+        {
+            StopSearch(true);
+            BtnFind.Enabled = true;
+            btnBrowse.Enabled = true;
+
+            StartTxt.Text = String.Empty;
+            PasswordTxt.Text = String.Empty;
+            EndTxt.Text = String.Empty;
+            TimeNeededTxt.Text = String.Empty;
+
+            EsecuzioneTLP.Controls.Clear();
+            groupBox4.BackColor = SystemColors.Control;
+        }
+
+        private void FileNameTxt_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (string.IsNullOrEmpty(FileNameTxt.Text))
+            {
+                errorProviderDoc.SetError(FileNameTxt, "Please select file");
+            }
+            else
+            {
+                errorProviderDoc.Clear();
+            }
+        }
+
+        private void openFileDoc_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(openFileDoc.FileName))
+            {
+                errorProviderDoc.Clear();
             }
         }
     }

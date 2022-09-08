@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.label11 = new System.Windows.Forms.Label();
             this.FileNameTxt = new System.Windows.Forms.TextBox();
@@ -60,14 +61,17 @@
             this.NumbersChk = new System.Windows.Forms.CheckBox();
             this.LowercaseChk = new System.Windows.Forms.CheckBox();
             this.BtnFind = new System.Windows.Forms.Button();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.openFileDoc = new System.Windows.Forms.OpenFileDialog();
             this.btnBrowse = new System.Windows.Forms.Button();
+            this.BtnCancel = new System.Windows.Forms.Button();
+            this.errorProviderDoc = new System.Windows.Forms.ErrorProvider(this.components);
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProviderDoc)).BeginInit();
             this.SuspendLayout();
             // 
             // label11
@@ -82,11 +86,12 @@
             // 
             // FileNameTxt
             // 
-            this.FileNameTxt.Location = new System.Drawing.Point(14, 24);
+            this.FileNameTxt.Location = new System.Drawing.Point(14, 26);
             this.FileNameTxt.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.FileNameTxt.Name = "FileNameTxt";
-            this.FileNameTxt.Size = new System.Drawing.Size(490, 23);
+            this.FileNameTxt.Size = new System.Drawing.Size(489, 23);
             this.FileNameTxt.TabIndex = 26;
+            this.FileNameTxt.Validating += new System.ComponentModel.CancelEventHandler(this.FileNameTxt_Validating);
             // 
             // groupBox5
             // 
@@ -416,7 +421,6 @@
             // BtnFind
             // 
             this.BtnFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnFind.BackColor = System.Drawing.Color.Honeydew;
             this.BtnFind.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.BtnFind.Location = new System.Drawing.Point(469, 428);
             this.BtnFind.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -427,26 +431,45 @@
             this.BtnFind.UseVisualStyleBackColor = false;
             this.BtnFind.Click += new System.EventHandler(this.BtnFind_Click);
             // 
-            // openFileDialog1
+            // openFileDoc
             // 
-            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDoc.FileName = "Office Document";
+            this.openFileDoc.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDoc_FileOk);
             // 
             // btnBrowse
             // 
-            this.btnBrowse.Location = new System.Drawing.Point(513, 24);
+            this.btnBrowse.Location = new System.Drawing.Point(521, 24);
             this.btnBrowse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnBrowse.Name = "btnBrowse";
-            this.btnBrowse.Size = new System.Drawing.Size(88, 27);
+            this.btnBrowse.Size = new System.Drawing.Size(86, 27);
             this.btnBrowse.TabIndex = 28;
             this.btnBrowse.Text = "Browse";
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
+            // 
+            // BtnCancel
+            // 
+            this.BtnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.BtnCancel.Location = new System.Drawing.Point(318, 428);
+            this.BtnCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.BtnCancel.Name = "BtnCancel";
+            this.BtnCancel.Size = new System.Drawing.Size(144, 31);
+            this.BtnCancel.TabIndex = 29;
+            this.BtnCancel.Text = "Cancel";
+            this.BtnCancel.UseVisualStyleBackColor = false;
+            this.BtnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
+            // 
+            // errorProviderDoc
+            // 
+            this.errorProviderDoc.ContainerControl = this;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(620, 471);
+            this.Controls.Add(this.BtnCancel);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.BtnFind);
             this.Controls.Add(this.label11);
@@ -460,7 +483,7 @@
             this.MaximizeBox = false;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Word Password Brute Force";
+            this.Text = "Office Document Password Recovery";
             this.groupBox5.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
@@ -471,6 +494,7 @@
             this.groupBox6.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProviderDoc)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -508,9 +532,11 @@
         private System.Windows.Forms.CheckBox NumbersChk;
         private System.Windows.Forms.CheckBox LowercaseChk;
         private System.Windows.Forms.Button BtnFind;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.OpenFileDialog openFileDoc;
         private System.Windows.Forms.Button btnBrowse;
         private CheckBox SpecialChk;
+        private Button BtnCancel;
+        private ErrorProvider errorProviderDoc;
     }
 }
 
