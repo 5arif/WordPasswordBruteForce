@@ -41,8 +41,6 @@ namespace WordPasswordBruteForce
                 return;
             }
 
-            MessageBox.Show("Start");
-
             BtnFind.Enabled = false;
             btnBrowse.Enabled = false;
             testedPasswords = new();
