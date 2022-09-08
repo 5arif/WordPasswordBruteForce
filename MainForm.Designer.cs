@@ -44,6 +44,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.PasswordTxt = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.ExtimedTimeTxt = new System.Windows.Forms.TextBox();
@@ -68,6 +69,7 @@
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -226,7 +228,7 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.label8);
+            this.groupBox3.Controls.Add(this.panel1);
             this.groupBox3.Controls.Add(this.label7);
             this.groupBox3.Controls.Add(this.ExtimedTimeTxt);
             this.groupBox3.Controls.Add(this.label2);
@@ -240,13 +242,21 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Elaboration";
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.label8);
+            this.panel1.Location = new System.Drawing.Point(6, 117);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(181, 37);
+            this.panel1.TabIndex = 10;
+            // 
             // label8
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(7, 112);
+            this.label8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label8.Location = new System.Drawing.Point(0, 0);
             this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(113, 15);
+            this.label8.Size = new System.Drawing.Size(181, 37);
             this.label8.TabIndex = 10;
             this.label8.Text = "(on a Intel i5, 2 GHz)";
             // 
@@ -489,6 +499,7 @@
             this.groupBox4.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.panel1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
@@ -537,6 +548,7 @@
         private CheckBox SpecialChk;
         private Button BtnCancel;
         private ErrorProvider errorProviderDoc;
+        private Panel panel1;
     }
 }
 

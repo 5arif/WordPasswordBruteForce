@@ -1,6 +1,7 @@
 ﻿using NPOI.POIFS.Crypt;
 using NPOI.POIFS.Crypt.Agile;
 using NPOI.POIFS.FileSystem;
+using System.Management;
 using System.Reflection;
 using System.Security;
 
@@ -31,6 +32,19 @@ namespace WordPasswordBruteForce
 
             EstimatedTimeTxt_Populate();
             openFileDoc.Filter = "Office Document (*.DOC;*.DOCX;*.RTF;*.XLS;*.XLSX;)|*.DOC;*.DOCX;*.RTF;*.XLS;*.XLSX;*.CSV|All files (*.*)|*.*";
+
+
+            var query = new SelectQuery("Win32_Processor");
+            var objectSearcher = new ManagementObjectSearcher(query);
+            var osDetails = objectSearcher.Get();
+            var procName = string.Empty;
+
+            foreach (var item in osDetails)
+            {
+                procName = (string)item["Name"];
+            }
+
+            label8.Text = procName;
         }
 
         private void BtnFind_Click(object sender, EventArgs e)
@@ -87,7 +101,7 @@ namespace WordPasswordBruteForce
             for (int Idx = 0 + 1; Idx < Tot; Idx++)
             {
                 ColumnStyle ClnSt = new(SizeType.Percent, ((float)1 / Tot * 100));
-                int i = EsecuzioneTLP.ColumnStyles.Add(ClnSt);
+                EsecuzioneTLP.ColumnStyles.Add(ClnSt);
             }
 
             for (int Idx = 0; Idx < Tot; Idx++)
@@ -95,14 +109,14 @@ namespace WordPasswordBruteForce
                 // r 1
                 EsecuzioneTLP.Controls.Add(new Label() { Text = Idx.ToString("00") }, Idx, 0);
                 // r 2
-                TextBox NumTxt = new() { TextAlign = HorizontalAlignment.Right, Width = 50, Name = "NumThread" + Idx.ToString("00") + "Txt", Dock = DockStyle.Fill };
+                TextBox NumTxt = new() { TextAlign = HorizontalAlignment.Center, Name = "NumThread" + Idx.ToString("00") + "Txt", Dock = DockStyle.Fill };
                 EsecuzioneTLP.Controls.Add(NumTxt, Idx, 1);
             }
         }
 
         private void Runner(TextBox NumTxt)
         {
-            var action = new Action<string>((s) => { NumTxt.Text = s; });
+            var action = new Action<string>((s) => { NumTxt.Text = s; NumTxt.BackColor =  SystemColors.Info; });
             NumTxt.Invoke(action, string.Empty);
 
             //NPOI
